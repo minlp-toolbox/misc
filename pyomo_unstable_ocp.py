@@ -2,6 +2,7 @@ from pyomo.environ import *
 from pyomo.opt import SolverFactory, ProblemFormat
 from time import perf_counter
 
+
 def tic():
     """Tic."""
     global perf_ti
@@ -20,6 +21,7 @@ def toc(reset=False):
         perf_ti = tim
     return dt
 
+
 def create_ocp_unstable_system_pyomo(p_val=[0.9, 0.7]):
     dt = 0.05
     N = 30
@@ -28,7 +30,7 @@ def create_ocp_unstable_system_pyomo(p_val=[0.9, 0.7]):
 
     model = ConcreteModel()
     model.T = RangeSet(0, N)
-    model.Tu = RangeSet(0, N-1)
+    model.Tu = RangeSet(0, N - 1)
 
     X0 = p_val[0]
     Xref = p_val[1]
@@ -47,21 +49,23 @@ def create_ocp_unstable_system_pyomo(p_val=[0.9, 0.7]):
         k3 = fun(m.x[k] + dt / 2 * k2, m.u[k])
         k4 = fun(m.x[k] + dt * k3, m.u[k])
         X += dt / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
-        return m.x[k+1] == X
+        return m.x[k + 1] == X
         # return m.x[k+1] == m.x[k] + dt * (m.x[k]**3 - m.u[k])  # explicit Euler integrator
+
     model.dynamics = Constraint(model.Tu, rule=dynamics_rule)
 
     def objective_rule(m):
-        return sum((m.x[k] - Xref)**2 for k in m.T)
+        return sum((m.x[k] - Xref) ** 2 for k in m.T)
+
     model.obj = Objective(rule=objective_rule, sense=minimize)
 
     def uptime_rule(m, k):
-        if k==0:
+        if k == 0:
             return Constraint.Skip
         else:
             idx_1 = k - 1
             idx_2 = k - 2
-            if idx_1 >=0:
+            if idx_1 >= 0:
                 b_1 = m.u[idx_1]
             else:
                 b_1 = 0
@@ -71,6 +75,7 @@ def create_ocp_unstable_system_pyomo(p_val=[0.9, 0.7]):
                 b_2 = 0
             print(f"{-m.u[k]} + {b_1} - {b_2} <= 0")
             return -m.u[k] + b_1 - b_2 <= 0
+
     model.uptime_constraints = Constraint(model.Tu, rule=uptime_rule)
 
     return model
@@ -83,7 +88,6 @@ if __name__ == "__main__":
     print(" =========== HARD CODED EXAMPLE !! ==========")
     print("========================================")
 
-
     model = create_ocp_unstable_system_pyomo()
     # Create the NL file
     model_filename = "ocp_model.nl"
@@ -91,7 +95,7 @@ if __name__ == "__main__":
     print(f"NL file written to {model_filename}")
 
     # Call SHOT solver via Pyomo
-    opt = SolverFactory('shot')  # SHOT uses SCIP internally
+    opt = SolverFactory("shot")  # SHOT uses SCIP internally
     tic()
     results = opt.solve(model, tee=True)
     toc()
@@ -135,9 +139,13 @@ if __name__ == "__main__":
 
     matplotlib.rcParams.update({"lines.linewidth": 1})
     fig, axs = plt.subplots(2, 1, figsize=(3, 3), sharex=True)
-    time_array = np.arange(0, 31*0.05, 0.05)
+    time_array = np.arange(0, 31 * 0.05, 0.05)
 
-    axs[0].plot(time_array, state, color="tab:blue",)
+    axs[0].plot(
+        time_array,
+        state,
+        color="tab:blue",
+    )
     axs[0].axhline(0.7, color="red", linestyle=":")
     axs[0].set_ylabel("$x$")
     axs[0].set_ylim(0.65, 0.95)
