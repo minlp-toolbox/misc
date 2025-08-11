@@ -97,7 +97,14 @@ if __name__ == "__main__":
     # Call SHOT solver via Pyomo
     opt = SolverFactory("shot")  # SHOT uses SCIP internally
     tic()
-    results = opt.solve(model, tee=True)
+    results = opt.solve(
+        model,
+        tee=True,
+        options={
+            "Termination.ObjectiveGap.Absolute": 1e-4,
+            "Termination.ObjectiveGap.Relative": 1e-4,
+        },
+    )
     toc()
 
     # Create the MindtPy solver
