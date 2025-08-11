@@ -1,5 +1,5 @@
 # misc
-Containers for short examples, ideas, comparisons
+Container for short examples, ideas, comparisons
 
 ---
 
