@@ -94,7 +94,6 @@ for problem in problems[i_start:]:
     ampl.eval("solve;")
     ampl.eval("display solve_result_num, solve_result;")
 
-    # TODO check for optimal solution else return failed
     if ampl.getValue('solve_result') not in ["solved", "limit"]:
         total_stats.append([idx, problem_path, "FAILED", ampl.getValue('solve_result'), ampl.getValue('_solve_elapsed_time')])
     else:
