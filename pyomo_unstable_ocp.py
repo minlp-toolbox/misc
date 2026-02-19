@@ -1,3 +1,7 @@
+# This file is part of minlp-toolbox/misc
+# Copyright (C) 2026  Andrea Ghezzi
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from pyomo.environ import *
 from pyomo.opt import SolverFactory, ProblemFormat
 from time import perf_counter
