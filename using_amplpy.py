@@ -2,7 +2,7 @@
 # Copyright (C) 2026  Andrea Ghezzi
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# from amplpy import AMPL
+from amplpy import AMPL
 from sys import argv
 import os
 import json
@@ -353,9 +353,10 @@ for problem in problems[i_start:]:
     ampl.eval("option show_stats 1;")
 
     if problem_type == "noncvx":
-        time_limit = str(noncvx_problems_time_limit[problem])
+        time_limit = str(noncvx_problems_time_limit[problem.split('.')[0]])
     else:
         time_limit = str(300)
+    print(f"{time_limit=}")
 
     if (
         solver == "gurobi"
