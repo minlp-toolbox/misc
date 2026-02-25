@@ -354,6 +354,7 @@ for problem in problems[i_start:]:
 
     if problem_type == "noncvx":
         time_limit = str(noncvx_problems_time_limit[problem.split('.')[0]])
+        # time_limit = str(noncvx_problems_time_limit[problem.split('.')[0]] + 8)
     else:
         time_limit = str(300)
     print(f"{time_limit=}")
