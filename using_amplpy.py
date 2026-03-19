@@ -92,7 +92,7 @@ for problem in problems[i_start:]:
     ampl.eval("option show_stats 1;")
 
     if problem_type == "noncvx":
-        time_limit = str(noncvx_problems_time_limit[problem.split('.')[0]])
+        time_limit = str(noncvx_problems_time_limit[problem.split(".")[0]])
         # time_limit = str(noncvx_problems_time_limit[problem.split('.')[0]] + 8)
     else:
         time_limit = str(300)
@@ -136,17 +136,23 @@ for problem in problems[i_start:]:
             result["dual_obj"] = ampl.getValue("obj.bestbound")
             result["calc_time"] = ampl.getValue("_solve_elapsed_time")
             total_stats.append(
-                [idx, problem_path, result["obj"], result["dual_obj"], result["calc_time"]]
+                [
+                    idx,
+                    problem_path,
+                    result["obj"],
+                    result["dual_obj"],
+                    result["calc_time"],
+                ]
             )
     except:
         total_stats.append(
-        [
-            idx,
-            problem_path,
-            "FAILED",
-            ampl.getValue("solve_result"),
-            ampl.getValue("_solve_elapsed_time"),
-        ]
+            [
+                idx,
+                problem_path,
+                "FAILED",
+                ampl.getValue("solve_result"),
+                ampl.getValue("_solve_elapsed_time"),
+            ]
         )
     do_write(overview_target, start, idx, solver, total_stats)
     idx += 1

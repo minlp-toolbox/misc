@@ -67,7 +67,9 @@ if __name__ == "__main__":
     sbmiqp_wall_time = data[[col_name]]
     sbmiqp_wall_time.fillna(np.inf, inplace=True)
     sbmiqp_wall_time.loc[:, col_name] = sbmiqp_wall_time[col_name].map(to_float)
-    sbmiqp_wall_time.loc[:, col_name] = sbmiqp_wall_time[col_name].clip(lower=0, upper=300)
+    sbmiqp_wall_time.loc[:, col_name] = sbmiqp_wall_time[col_name].clip(
+        lower=0, upper=300
+    )
 
     sbmiqp_wall_time.to_json(
         os.path.join(
