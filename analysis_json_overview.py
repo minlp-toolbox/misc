@@ -39,7 +39,9 @@ def to_float(val):
             return np.inf
         else:
             val = float(val)
-            if val > 1e20:
+            if abs(val) > 1e20:
+                return np.inf
+            elif val == np.nan:
                 return np.inf
             else:
                 return float(val)
@@ -63,8 +65,9 @@ if __name__ == "__main__":
     col_name = f"{key}_sbmiqp.calc_time"
     data.set_index("name", inplace=True)
     sbmiqp_wall_time = data[[col_name]]
-    sbmiqp_wall_time[col_name] = sbmiqp_wall_time[col_name].map(to_float)
-    sbmiqp_wall_time[col_name] = sbmiqp_wall_time[col_name].clip(lower=0, upper=300)
+    sbmiqp_wall_time.fillna(np.inf, inplace=True)
+    sbmiqp_wall_time.loc[:, col_name] = sbmiqp_wall_time[col_name].map(to_float)
+    sbmiqp_wall_time.loc[:, col_name] = sbmiqp_wall_time[col_name].clip(lower=0, upper=300)
 
     sbmiqp_wall_time.to_json(
         os.path.join(
