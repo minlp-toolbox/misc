@@ -17,7 +17,16 @@ Install the solver SHOT separately by following the [instructions](https://shots
 
 Run the example:
 ```
-python pyomo_unstable_ocp.py
+python pyomo_unstable_ocp.py <solver>
+<solver>: shot, scip, gurobi
 ```
+
+**Note** to use SCIP or Gurobi for solving the unstable OCP example, AMPLpy is necessary. To install it do:
+```
+python -m pip install amplpy --upgrade
+# Install solver modules -- SCIP and Gurobi
+python -m amplpy.modules install scip gurobi
+```
+
 
 
