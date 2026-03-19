@@ -5,6 +5,8 @@
 from pyomo.environ import *
 from pyomo.opt import SolverFactory, ProblemFormat
 from time import perf_counter
+from amplpy import modules
+from sys import argv
 
 
 def tic():
@@ -92,6 +94,9 @@ if __name__ == "__main__":
     print(" =========== HARD CODED EXAMPLE !! ==========")
     print("========================================")
 
+    solver_name = argv[1]
+    assert solver_name == "shot" or solver_name == "scip" or solver_name == "gurobi"
+
     model = create_ocp_unstable_system_pyomo()
     # Create the NL file
     model_filename = "ocp_model.nl"
@@ -99,15 +104,30 @@ if __name__ == "__main__":
     print(f"NL file written to {model_filename}")
 
     # Call SHOT solver via Pyomo
-    opt = SolverFactory("shot")  # SHOT uses SCIP internally
+
+    if solver_name == "shot":
+        opt = SolverFactory("shot")
+        options = (
+            {
+                "Termination.ObjectiveGap.Absolute": 1e-4,
+                "Termination.ObjectiveGap.Relative": 1e-4,
+            },
+        )
+    else:
+
+        opt = SolverFactory(
+            solver_name + "nl", executable=modules.find(solver_name), solve_io="nl"
+        )
+        options = {
+            "mipgap": 1e-4,
+            "outlev": 1,
+        }
+
     tic()
     results = opt.solve(
         model,
         tee=True,
-        options={
-            "Termination.ObjectiveGap.Absolute": 1e-4,
-            "Termination.ObjectiveGap.Relative": 1e-4,
-        },
+        options=options,
     )
     toc()
 
